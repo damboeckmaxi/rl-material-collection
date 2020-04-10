@@ -1,0 +1,12 @@
+state_history: 4
+buffer_size: 1000
+training_steps: 200
+train_interval: 50
+t_start_training: 50
+evaluation_interval: 2000
+gamma: 0.99
+epsilon: 1.0
+epsilon_min: 0.01
+epsilon_decay: 5000
+batch_size: 64
+learning_rate: 0.005

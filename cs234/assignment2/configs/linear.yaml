@@ -1,8 +1,8 @@
 state_history: 4
 buffer_size: 1000
-training_steps: 200
+training_steps: 500
 train_interval: 50
-t_start_training: 50
+t_start_training: 100
 evaluation_interval: 2000
 gamma: 0.99
 epsilon: 1.0

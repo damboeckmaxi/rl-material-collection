@@ -27,8 +27,10 @@ class SimpleReplayBuffer(ReplayBuffer[int, int, float]):
         self.buffer.append(sequence)
 
     def sample(self, n: int) -> List[StateActionSequence]:
-        indices = np.random.choice(len(self.buffer), size=n)
-        return [self.buffer[i] for i in indices]
+        indices = list(range(len(self.buffer)))
+        random.shuffle(indices)
+        sample = [self.buffer[i] for i in indices[:n]]
+        return sample
 
 
 class DQNAgent:
@@ -45,7 +47,7 @@ class DQNAgent:
             return DQNAgent(model=model, config=config)
 
     def act(self, state: np.ndarray) -> int:
-        q_values = self.target_q_function.predict(np.array([state,]))
+        q_values = self.q_function.predict(np.array([state,]))
         return np.argmax(q_values, axis=-1)[0]
 
     def configure_policy(self) -> EpsilonGreedyPolicy:
@@ -79,7 +81,7 @@ class DQNAgent:
                 state = next_state
 
                 if t > t_start_training:
-                    losses = self.fit_model(replay_buffer=replay_buffer, gamma=gamma)
+                    self.fit_model(replay_buffer=replay_buffer, gamma=gamma)
                     if t % train_interval == 0:
                         self.target_q_function = tf.keras.models.clone_model(self.q_function)
 
@@ -95,7 +97,6 @@ class DQNAgent:
         learning_rate = float(self.config['learning_rate'])
 
         replay_batch = replay_buffer.sample(n=batch_size)
-
         states = np.array([s for s, _, _, _, _ in replay_batch])
 
         y = self.q_function.predict(states)
